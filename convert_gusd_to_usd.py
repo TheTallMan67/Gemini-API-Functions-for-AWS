@@ -23,8 +23,8 @@ def convert_gusd_to_usd(options):
     usd_balance = get_balance(current_balances, 'USD')
 
     if (options["sandbox"] == False):
-        if (gusd_balance > 0):
-            wrap_order = trader.wrap_order(gusd_balance, GUSD_INTO_USD)
+        if (float(gusd_balance) > 0):
+            wrap_order = trader.wrap_order("GUSDUSD", gusd_balance, GUSD_INTO_USD)
         else:
             wrap_order = {"status" : "no gusd balance"}
     else:

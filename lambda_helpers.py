@@ -22,8 +22,8 @@ def apply_event_defaults(event, defaults={}):
     assert "account_id" in options, REQUIRED_PARAM.format("account_id")
     return options
 
-def _httpResponse(statusCode, data = {}):
-    return {
+def _http_response(statusCode, data = {}):
+    http_response = {
         "headers" : {
             "Content-Type": "application/json",
             "Access-Control-Allow-Methods": "*",
@@ -32,12 +32,14 @@ def _httpResponse(statusCode, data = {}):
         "statusCode": statusCode,
         "body": json.dumps(data)
     }
+    print("HTTP Response: " + json.dumps(http_response))
+    return http_response
 
 def http_ok(data):
-    return _httpResponse(200, data)
+    return _http_response(200, data)
 
 def http_error(err, statusCode = 400):
-    return _httpResponse(statusCode, err)
+    return _http_response(statusCode, err)
 
 def generate_secret_arn(options):
     if (options["sandbox"]):
