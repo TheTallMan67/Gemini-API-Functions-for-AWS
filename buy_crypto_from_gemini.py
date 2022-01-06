@@ -18,26 +18,33 @@ def validate_event(event, defaults={}):
     assert options["amount"] > 0, "Amount ({}) must be greater than zero".format(options["amount"])
     return options
 
-def get_tick_size(options):
+def _get_exponent_from_details(options, detail_name):
     trader = gemini.PublicClient(options["sandbox"])
     currency_details = trader.symbol_details(options["currency"])
     assert type(currency_details) is dict
-    assert "tick_size" in currency_details
-    base10 = log10(abs(currency_details["tick_size"]))
+    assert detail_name in currency_details
+    base10 = log10(abs(currency_details[detail_name]))
     exponent = abs(floor(base10)) 
     return exponent
+
+def get_quote_increment(options):
+    return _get_exponent_from_details(options, "quote_increment")
+
+def get_tick_size(options):
+    return _get_exponent_from_details(options, "tick_size")
 
 def place_buy_order(options):
     trader = get_trader(options)
     spot_price = float(trader.get_ticker(options["currency"])['ask'])
+    quote_increment = get_quote_increment(options)
     #to set a limit order at a fixed price (ie. $55,525) set execution_price = "55525.00" or execution_price = str(55525.00)
-    execution_price = str(round(spot_price * FACTOR, 2))
+    execution_price = str(round(spot_price * FACTOR, quote_increment))
     # get tick size
     tick_size = get_tick_size(options)
     #set amount to the most precise rounding (tick_size) and multiply by 0.999 for fee inclusion - if you make an order for $20.00 there should be $19.98 coin bought and $0.02 (0.10% fee)
-    amount = round((options["amount"] * FACTOR) / float(execution_price), tick_size)
+    amount = str(round((options["amount"] * FACTOR) / float(execution_price), tick_size))
     #execute maker buy with the appropriate symbol (options["currency"]), amount, and calculated price
-    buy_order = trader.new_order(options["currency"], str(amount), execution_price, "buy", ["maker-or-cancel"])
+    buy_order = trader.new_order(options["currency"], amount, execution_price, "buy", ["maker-or-cancel"])
     return buy_order
 
 def lambda_handler(event, context):
