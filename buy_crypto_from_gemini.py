@@ -21,6 +21,7 @@ def validate_event(event, defaults={}):
 def _get_exponent_from_details(options, detail_name):
     trader = gemini.PublicClient(options["sandbox"])
     currency_details = trader.symbol_details(options["currency"])
+    #example: {"symbol":"BTCUSD","base_currency":"BTC","quote_currency":"USD","tick_size":1E-8,"quote_increment":0.01,"min_order_size":"0.00001","status":"open","wrap_enabled":false}
     assert type(currency_details) is dict
     assert detail_name in currency_details
     base10 = log10(abs(currency_details[detail_name]))
