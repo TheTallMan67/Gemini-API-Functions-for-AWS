@@ -47,7 +47,7 @@ def lambda_handler(event, context):
     try:
         """
         {
-            "sandbox" : false,
+            "sandbox" : false
         }
         """
         # get environment from event
