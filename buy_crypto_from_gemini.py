@@ -2,12 +2,20 @@ import json
 import gemini
 import boto3
 import base64
+import requests
 from botocore.exceptions import ClientError
 from math import log10, floor
 from lambda_helpers import *
 
 ALLOWED_CURRENCIES = ["BTCUSD", "ETHUSD"]
 FACTOR = 0.999
+
+def get_fear_and_greed_index():
+    response = requests.get("https://api.alternative.me/fng/")
+    json_data = json.loads(response.text)
+    fear_and_greed_value = int(json_data['data'][0]['value'])
+    fear_and_greed_classification = json_data['data'][0]['value_classification']
+    return dict(value=fear_and_greed_value, classification=fear_and_greed_classification)
 
 def validate_event(event, defaults={}):
     options = apply_event_defaults(event, defaults)
