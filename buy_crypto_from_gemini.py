@@ -9,14 +9,6 @@ from lambda_helpers import *
 
 ALLOWED_CURRENCIES = ["BTCUSD", "ETHUSD"]
 FACTOR = 0.999
-#Fear and Greed indicator: Set to True if you want to include Fear and Greed data
-INCLUDE_FEAR_AND_GREED = False
-#If the Fear and Greed indicator is below FEAR_FLOOR, multiply amount purchased by FEAR_MULTIPLIER
-FEAR_FLOOR = 20
-FEAR_MULTIPLIER = 1.5
-#If the Fear and Greed indicator is above GREED_CEILING, mulitply amount purchased by GREED_MULITPLIER
-GREED_CEILING = 80
-GREED_MULTIPLIER = 0.5
 
 def get_fear_and_greed_index():
     response = requests.get("https://api.alternative.me/fng/")
@@ -59,11 +51,10 @@ def place_buy_order(options, fear_and_greed):
     # get tick size
     tick_size = get_tick_size(options)
     #if you want to consider the fear and greed data and the fear is less than your specified fear floor or greater than your specified greed ceiling adjust the amount you're buying
-    if(fear_and_greed):
-        if(get_fear_and_greed_index()['value'] < FEAR_FLOOR):
-            options["amount"] *= FEAR_MULTIPLIER
-        if(get_fear_and_greed_index()['value'] > GREED_CEILING):
-            options["amount"] *= GREED_MULTIPLIER
+    if(options["includeFear"] and get_fear_and_greed_index()['value'] < options["fearFloor"]):
+        options["amount"] *= options["fearMultiplier"]
+    if(options["includeGreed"] and get_fear_and_greed_index()['value'] > options["greedCeiling"]):
+        options["amount"] *= options["greedMultiplier"]
     #set amount to the most precise rounding (tick_size) and multiply by 0.999 for fee inclusion - if you make an order for $20.00 there should be $19.98 coin bought and $0.02 (0.10% fee)
     amount = str(round((options["amount"] * FACTOR) / float(execution_price), tick_size))
     #execute maker buy with the appropriate symbol (options["currency"]), amount, and calculated price
