@@ -42,7 +42,7 @@ def get_quote_increment(options):
 def get_tick_size(options):
     return _get_exponent_from_details(options, "tick_size")
 
-def place_buy_order(options, fear_and_greed):
+def place_buy_order(options):
     trader = get_trader(options)
     spot_price = float(trader.get_ticker(options["currency"])['ask'])
     quote_increment = get_quote_increment(options)
@@ -75,7 +75,7 @@ def lambda_handler(event, context):
         print("event recieved: " + json.dumps(event))
         options = validate_event(event)
         # place buy order
-        buy_order = place_buy_order(options, INCLUDE_FEAR_AND_GREED)
+        buy_order = place_buy_order(options)
         print("buy order: " + json.dumps(buy_order))
         response = http_ok(buy_order)
     except Exception as e:
