@@ -7,7 +7,11 @@ from math import log10, floor
 from lambda_helpers import *
 
 ALLOWED_CURRENCIES = ["BTCUSD", "ETHUSD"]
-FACTOR = 0.999
+#FEE_FACTOR always at 0.999 to include the 0.1% maker order fee in your order price 
+FEE_FACTOR = 0.999
+#ORDER_FILL_FACTOR can be moved up/down to change the limit price of your order (ie. 0.9 is 90% of spot price - slower fill but better price. 0.99 is 99% of spot price - faster fill but worse price)
+ORDER_FILL_FACTOR = 0.999
+
 
 def validate_event(event, defaults={}):
     options = apply_event_defaults(event, defaults)
@@ -39,11 +43,11 @@ def place_buy_order(options):
     spot_price = float(trader.get_ticker(options["currency"])['ask'])
     quote_increment = get_quote_increment(options)
     #to set a limit order at a fixed price (ie. $55,525) set execution_price = "55525.00" or execution_price = str(55525.00)
-    execution_price = str(round(spot_price * FACTOR, quote_increment))
+    execution_price = str(round(spot_price * ORDER_FILL_FACTOR, quote_increment))
     # get tick size
     tick_size = get_tick_size(options)
-    #set amount to the most precise rounding (tick_size) and multiply by 0.999 for fee inclusion - if you make an order for $20.00 there should be $19.98 coin bought and $0.02 (0.10% fee)
-    amount = str(round((options["amount"] * FACTOR) / float(execution_price), tick_size))
+    #set amount to the most precise rounding (tick_size) and multiply by 0.999 for fee inclusion - if you make an order for $20.00 there should be $19.98 coin bought and $0.02 (0.1% fee)
+    amount = str(round((options["amount"] * FEE_FACTOR) / float(execution_price), tick_size))
     #execute maker buy with the appropriate symbol (options["currency"]), amount, and calculated price
     buy_order = trader.new_order(options["currency"], amount, execution_price, "buy", ["maker-or-cancel"])
     return buy_order
