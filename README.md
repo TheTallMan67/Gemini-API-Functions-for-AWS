@@ -1,6 +1,6 @@
 # Gemini-API-Functions-for-AWS
 
-<a href="https://rhettre.notion.site/Gemini-API-Functions-for-AWS-abe92c33a13b4be19d232d5c91edfcc" target="_blank">Start Here</a>
+<a href="https://rhettre.notion.site/Gemini-API-Functions-for-AWS-abe92c33a13b4be19d232d5c91edfccf" target="_blank">Start Here</a>
 
 <a href="https://github.com/TheTallMan67/Gemini-API-Functions-for-AWS/discussions/new" target="_blank">Submit an Enhancement Request</a>
 
