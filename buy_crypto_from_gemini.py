@@ -6,7 +6,6 @@ from botocore.exceptions import ClientError
 from math import log10, floor
 from lambda_helpers import *
 
-ALLOWED_CURRENCIES = ["BTCUSD", "ETHUSD"]
 #FEE_FACTOR always at 0.999 to include the 0.1% maker order fee in your order price 
 FEE_FACTOR = 0.999
 #ORDER_FILL_FACTOR can be moved up/down to change the limit price of your order (ie. 0.9 is 90% of spot price - slower fill but better price. 0.99 is 99% of spot price - faster fill but worse price)
@@ -17,7 +16,6 @@ def validate_event(event, defaults={}):
     options = apply_event_defaults(event, defaults)
     print("validating options: " + json.dumps(options))
     assert "currency" in options, REQUIRED_PARAM.format("currency")
-    assert options["currency"] in ALLOWED_CURRENCIES, "Unknown currency '" + options["currency"]
     assert "amount" in options, REQUIRED_PARAM.format("amount")
     assert options["amount"] > 0, "Amount ({}) must be greater than zero".format(options["amount"])
     return options
