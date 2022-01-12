@@ -2,9 +2,13 @@ import json
 import gemini
 import boto3
 
+#ORDER_FILL_FACTOR can be moved up/down to change the limit price of your order (ie. 0.9 is 90% of spot price - slower fill but better price. 0.99 is 99% of spot price - faster fill but worse price)
+ORDER_FILL_FACTOR = 0.999
+
 REQUIRED_PARAM = "Missing required parameter: {}"
 SYSTEM_DEFAULTS = {
-    "sandbox" : True
+    "sandbox" : True,
+    "orderFillFactor" : ORDER_FILL_FACTOR
 }
 
 def apply_event_defaults(event, defaults={}):
@@ -14,6 +18,7 @@ def apply_event_defaults(event, defaults={}):
     }
     assert type(options) is dict
     assert "sandbox" in options, REQUIRED_PARAM.format("sandbox")
+    assert "orderFillFactor" in options, REQUIRED_PARAM.format("orderFillFactor")
     return options
 
 def _http_response(statusCode, data = {}):
