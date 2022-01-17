@@ -29,6 +29,17 @@ or
 }
 ```
 
+An example of all of the currently supported parameters and their applicable default values.  
+
+```
+{
+   "sandbox" : true,
+   "orderFillFactor" : 0.999
+   "currency": "BTCUSD", 
+   "amount": 0
+}
+```
+
 # The Future
 <a href="https://github.com/TheTallMan67/Gemini-API-Functions-for-AWS/discussions/new" target="_blank">Submit an Enhancement Request</a>
 
