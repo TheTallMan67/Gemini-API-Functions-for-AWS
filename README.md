@@ -8,7 +8,7 @@
 
 # The How
 
-1. Follow along with <a href="https://www.youtube.com/watch?v=h6r1h3am6kA" target="_blank">this Youtube Video</a>
+1. Follow along with <a href="https://www.youtube.com/watch?v=h6r1h3am6kA" target="_blank">this Youtube Video</a> (Thanks <a href="https://linktr.ee/RhettReisman">@Rhett</a>)
 2. Gather the <a href="https://rhettre.notion.site/Gemini-API-Functions-for-AWS-abe92c33a13b4be19d232d5c91edfccf" target="_blank">needed resources here</a>. 
 3. Supplement the lambda functions with the ones in the repository. _Check back often for updates._
 
@@ -50,6 +50,9 @@ Instead of pasting your public and private API keys directly into the lambda fun
 1. Go to the AWS Secrets Manager https://console.aws.amazon.com/secretsmanager/home
 2. Click _Store a new secret_
 3. Select Other type and enter your Gemini public and private key into the plaintest box as show here
+
+<img src="/assets/readme/api-secret.png"> 
+
 ```
 {
   "API key": "account-YourPublicKeyHere",
@@ -57,10 +60,8 @@ Instead of pasting your public and private API keys directly into the lambda fun
 }
 ```
 
-<img src="/assets/readme/api-secret.png"> 
-
 4. Set the Secret name as "GeminiAPISandbox" or "GeminiAPI"
-5. Finally, modify the Lambda execution role to have an updated IAM Role and Policy
+5. Finally, modify the Lambda function execution role to have an updated IAM Role and Policy
 
 <img src="/assets/readme/iam-role-policy.png"> 
 
