@@ -12,6 +12,7 @@
 
 ## Passing parameters to lambda functions
 Instead of creating a lambda function for each different crypto (or price/coin combination) you can create a single _Event Bridge Rule_ and pass parameters to the function.
+//IMAGE TODO
 The required parameters are **sandbox**, **currency** and **amount**. Exmaple:
 ```
 {
@@ -40,6 +41,39 @@ An example of all of the currently supported parameters and their applicable def
 }
 ```
 
+## Hiding API keys
+Instead of pasting your public and private API keys directly into the lambda function they should be stored in the _AWS Secrets Manager_ [^1].
+1. https://console.aws.amazon.com/secretsmanager/home
+2. Click _Store a new secret_
+3. Select Other type and enter your public and private key into the plaintest box as show here
+```
+{
+  "API key": "account-YourPublicKeyHere",
+  "API Secret": "YourPrivateKeyHere"
+}
+```
+//TODO Image
+4. Set the Secret name as "GeminiAPISandbox" or "GeminiAPI"
+5. Finally, modify the Lambda execution role to have an updated IAM Role and Policy
+6. //TODO Image
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "secretsmanager:GetSecretValue",
+            "Resource": [
+                "arn:aws:secretsmanager:us-east-1:<AWS_ACCOUNT_ID>:secret:GeminiAPISandbox-<UNIQUE_ID_FROM_AWS>",
+                "arn:aws:secretsmanager:us-east-1:<AWS_ACCOUNT_ID>:secret:GeminiAPI-<UNIQUE_ID_FROM_AWS>"
+            ]
+        }
+    ]
+}
+```
+
+
 # The Future
 <a href="https://github.com/TheTallMan67/Gemini-API-Functions-for-AWS/discussions/new" target="_blank">Submit an Enhancement Request</a>
 
@@ -51,3 +85,5 @@ An example of all of the currently supported parameters and their applicable def
             alt="bc1qqyhxl0cjj885t7aqh5fmygxxclg4xketq0suaz" 
             width="150" 
             height="150"/>
+
+[^1] AWS Secrets Manager may incur a very small cost. More details can be found at <a href="https://aws.amazon.com/secrets-manager/pricing/" target="_blank">AWS Secrets Manager Pricing</a>
