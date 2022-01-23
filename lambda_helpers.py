@@ -2,9 +2,24 @@ import json
 import gemini
 import boto3
 
+#If the Fear and Greed indicator is below FEAR_FLOOR, multiply amount purchased by FEAR_MULTIPLIER
+FEAR_FLOOR = 20
+FEAR_MULTIPLIER = 1.5
+#If the Fear and Greed indicator is above GREED_CEILING, mulitply amount purchased by GREED_MULITPLIER
+GREED_CEILING = 80
+GREED_MULTIPLIER = 0.5
+
 REQUIRED_PARAM = "Missing required parameter: {}"
 SYSTEM_DEFAULTS = {
-    "sandbox" : True
+    "sandbox" : True,
+    
+    "includeFear" : False,
+    "fearFloor" : FEAR_FLOOR,
+    "fearMultiplier" : FEAR_MULTIPLIER,
+    
+    "includeGreed" : False,
+    "greedCeiling" : GREED_CEILING,
+    "greedMultiplier" : GREED_MULTIPLIER
 }
 
 def apply_event_defaults(event, defaults={}):
@@ -14,6 +29,14 @@ def apply_event_defaults(event, defaults={}):
     }
     assert type(options) is dict
     assert "sandbox" in options, REQUIRED_PARAM.format("sandbox")
+    assert "includeFear" in options, REQUIRED_PARAM.format("includeFear")
+    if (options["includeFear"]):
+        assert "fearFloor" in options, REQUIRED_PARAM.format("fearFloor")
+        assert "fearMultiplier" in options, REQUIRED_PARAM.format("fearMultiplier")
+    assert "includeGreed" in options, REQUIRED_PARAM.format("includeGreed")
+    if (options["includeGreed"]):
+        assert "greedCeiling" in options, REQUIRED_PARAM.format("greedCeiling")
+        assert "greedMultiplier" in options, REQUIRED_PARAM.format("greedMultiplier")
     return options
 
 def _http_response(statusCode, data = {}):
