@@ -1,5 +1,6 @@
 import json
 import gemini
+import requests
 import boto3
 
 '''
@@ -72,6 +73,16 @@ def get_secrets(options):
         }
     else:
         raise Exception("SecretString not found")
+
+
+def get_fear_and_greed_index():
+    response = requests.get("https://api.alternative.me/fng/")
+    print("got fear and greed value")
+    json_data = json.loads(response.text)
+    fear_and_greed_value = int(json_data['data'][0]['value'])
+    fear_and_greed_classification = json_data['data'][0]['value_classification']
+    print('Fear/Greed Value:' + fear_and_greed_value)
+    return dict(value=fear_and_greed_value, classification=fear_and_greed_classification)
 
 
 def get_trader(options):
