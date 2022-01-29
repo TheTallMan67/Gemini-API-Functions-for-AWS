@@ -41,9 +41,26 @@ An example of all of the currently supported parameters and their applicable def
    "sandbox" : true,
    "orderFillFactor" : 0.999,
    "currency": "BTCUSD",
-   "amount": 0
+   "amount": 0,
+   "includeFear" : false,
+   "fearFloor" : 20,
+   "fearMultiplier" : 1.5,
+   "includeGreed" : false,
+   "greedCeiling" : 80,
+   "greedMultiplier" : 0.5
 }
 ```
+
+## Fear and Greed Index
+
+The [Fear and Greed Index](https://alternative.me/crypto/fear-and-greed-index/) analyzes the current sentiment of the Bitcoin market and converts the data into a simple meter from 0 to 100. Zero means "Extreme Fear", while 100 means "Extreme Greed". The index is for BTC only and utilizes 5 metrics.
+- Volatility (25 %)
+- Market Momentum/Volume (25%)
+- Social Media (15%)
+- Surveys (15%) currently paused
+- Dominance (10%)
+- Trends (10%)
+
 
 ## Hiding API keys
 Instead of pasting your public and private API keys directly into the lambda function they should be stored in the _AWS Secrets Manager_. [^1]
