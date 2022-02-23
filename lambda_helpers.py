@@ -67,21 +67,16 @@ def get_secret_key(options):
         return "GeminiAPI"
 
 def get_secrets(options):
-    aws_session = boto3.session.Session()
-    secret_client = aws_session.client(
-        service_name = 'secretsmanager'
+    aws_client = boto3.client("ssm")
+    parameter = get_secret_key(options)
+    get_parameter_response = aws_client.get_parameter(
+        Name=parameter, WithDecryption=True
     )
-    get_secret_value_response = secret_client.get_secret_value(
-        SecretId = get_secret_key(options)
-    )
-    if 'SecretString' in get_secret_value_response:
-        secret = json.loads(get_secret_value_response['SecretString'])
-        return {
-            "private_key" : secret["API Secret"],
-            "public_key" : secret["API key"]
-        }
+    secret = json.loads(get_parameter_response.get("Parameter").get("Value"))
+    if secret:
+        return {"private_key": secret["API Secret"], "public_key": secret["API key"]}
     else:
-        raise Exception("SecretString not found")   
+        raise Exception(f"{parameter} not found in SSM")
 
 def get_trader(options):
     # get secrets
