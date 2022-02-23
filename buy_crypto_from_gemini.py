@@ -23,6 +23,7 @@ def validate_event(event, defaults={}):
     print("validating options: " + json.dumps(options))
     assert "currency" in options, REQUIRED_PARAM.format("currency")
     assert "amount" in options, REQUIRED_PARAM.format("amount")
+    options["amount"] = float(options["amount"])
     assert options["amount"] > 0, "Amount ({}) must be greater than zero".format(
         options["amount"]
     )
