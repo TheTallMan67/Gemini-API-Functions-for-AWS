@@ -15,7 +15,7 @@
 ## Passing parameters to lambda functions
 Instead of creating a lambda function for each different crypto (or price/coin combination) you can create a single _Event Bridge Rule_ and pass parameters to the function.
 
-<img src="/assets/readme/lambda-parameters.png">
+<img src="./assets/readme/lambda-parameters.png">
 
 The required parameters are **sandbox**, **currency** and **amount**. Example:
 ```
@@ -63,12 +63,16 @@ The [Fear and Greed Index](https://alternative.me/crypto/fear-and-greed-index/) 
 
 
 ## Hiding API keys
-Instead of pasting your public and private API keys directly into the lambda function they should be stored in the _AWS Secrets Manager_. [^1]
-1. Go to the AWS Secrets Manager https://console.aws.amazon.com/secretsmanager/home
-2. Click _Store a new secret_
-3. Select Other type and enter your Gemini public and private key into the plaintext box as show here
+Instead of pasting your public and private API keys directly into the lambda function they should be stored in the _AWS Systems Manager Parameter Store_.
+1. Go to the AWS Systems Manager > Parameter Store https://console.aws.amazon.com/systems-manager/parameters/
+2. Click _Create parameter_
+3. Set the Secret name as `GeminiAPISandbox` or `GeminiAPI`
+4. Select Tier: `Standard`
+5. Select Type: `SecureString`
+6. Select Data type: `text`
+7. Enter your Gemini public and private key into the value box as show here
 
-<img src="/assets/readme/api-secret.png">
+<img src="./assets/readme/api-secret.png">
 
 ```
 {
@@ -77,23 +81,22 @@ Instead of pasting your public and private API keys directly into the lambda fun
 }
 ```
 
-4. Set the Secret name as "GeminiAPISandbox" or "GeminiAPI"
-5. Finally, modify the Lambda function execution role to have an updated IAM Role and Policy
+8. Finally, modify the Lambda function execution role to have an updated IAM Role with access to the SSM keys. This can be done by going to the Lambda function's `Configuration > Permissions` page, and editing the role to add the `AmazonSSMReadOnlyAccess` policy.
 
-<img src="/assets/readme/iam-role-policy.png">
+<img src="./assets/readme/ssmreadonly-policy.png">
 
 ```
 {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
             "Effect": "Allow",
-            "Action": "secretsmanager:GetSecretValue",
-            "Resource": [
-                "arn:aws:secretsmanager:us-east-1:<AWS_ACCOUNT_ID>:secret:GeminiAPISandbox-<UNIQUE_ID_FROM_AWS>",
-                "arn:aws:secretsmanager:us-east-1:<AWS_ACCOUNT_ID>:secret:GeminiAPI-<UNIQUE_ID_FROM_AWS>"
-            ]
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": "*"
         }
     ]
 }
@@ -111,5 +114,3 @@ Instead of pasting your public and private API keys directly into the lambda fun
             alt="bc1qqyhxl0cjj885t7aqh5fmygxxclg4xketq0suaz"
             width="150"
             height="150"/>
-
-[^1]: AWS Secrets Manager may incur a very small cost. More details can be found at <a href="https://aws.amazon.com/secrets-manager/pricing/" target="_blank">AWS Secrets Manager Pricing</a>
